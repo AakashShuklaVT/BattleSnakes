@@ -1,0 +1,45 @@
+Key points : 
+1. all code inside load event - required 
+2. when canvas resizes all things resets in game
+3. slash double star for comment 
+4. No need to rectangle collision detection in grid based games just check if they lie in same grid col and row
+5. jo canvas pe draw baad me hoga wo uper aayega
+6. 
+
+
+
+
+
+
+
+
+
+
+
+events :
+1. resize event - 'resize' event fired when window resizes
+2. 
+
+
+
+
+
+
+
+
+
+
+
+Methods used:
+1. ctx.fillRect(width, height, posx, posy) -> draws rectangle
+2. ctx.fillStyle = 'blue' -> makes canvas shapes blue
+3. ctx.strokeRect - draws an outline of rectangle
+4. ctx.fillText - adds text to canvas
+5. ctx.font = '50px Impact'; - give text size and font style
+6. ctx.textBaseline = 'top'; - gives anchor point to text
+7. #scoreScreen > div - select only direct children
+
+
+Bugs - 
+1. head must be above
+2. player snake should be visible

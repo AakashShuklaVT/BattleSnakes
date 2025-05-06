@@ -1,0 +1,78 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#canvas1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: url(Assets/grass_night.png);
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.assets {
+    display: none;
+}
+
+#controls {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    translate: -50% 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    color: rgb(255, 255, 255);
+    font: 15px Consolas;
+}
+
+#buttons {
+    width: 260px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+#buttons button {
+    width: 65px;
+    background: black;
+    color: white;
+    font: 15px Consolas;
+}
+
+#scoreScreen {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    column-gap: 25px;
+    width: 300px;
+}
+
+#playerChoice {
+    padding: 10px 5px;
+}
+
+.playerLabel {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+#gameMenu {
+    display: block;
+}
+
+#gameOverScreen {
+    background: url('./Assets/gameOver_forest.png');
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+img {
+    display: none;
+}
