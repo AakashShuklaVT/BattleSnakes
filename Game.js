@@ -19,7 +19,7 @@ export class Game {
         this.ctx= context;
 
         this.gameOver = true;
-        this.winningScore = 10;
+        this.winningScore = 2;
 
         this.debug = true;
 
@@ -129,7 +129,7 @@ export class Game {
 
     start() {
         if(!this.gameOver) {
-            this.gameUi.triggerGameOver();
+            this.gameUi.triggerGameOver(this);
         }
         else {
             this.gameOver = false;

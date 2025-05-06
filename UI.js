@@ -24,7 +24,7 @@ export class UI {
         this.player2Name = document.getElementById('player2Name');
         this.player3Name = document.getElementById('player3Name');
 
-        // full scree button
+        // full screen button
         this.fullScreenButton =  document.getElementById('fullScreenButton');
 
         // button click listeners
@@ -35,6 +35,10 @@ export class UI {
         this.startButton.addEventListener('click', () => {
             this.game.start();
         })
+
+        // messages
+        this.message1 = document.getElementById('message1')
+        this.message2 = document.getElementById('message2')
     }
 
     /**
@@ -50,9 +54,17 @@ export class UI {
     /**
      * triggers game over state
      */
-    triggerGameOver() {
-        this.game.gameOver = true;
+    triggerGameOver(winner) {
         this.gameOverUi();
+        if(winner) {
+            this.game.gameOver = true;
+            this.message1.innerText = 'Game Over ' + winner.name + ' wins';
+            this.message2.innerText = 'Winning Score '+ winner.score;
+        }
+        else {
+            this.message1.innerText = 'Welcome to the Battle Arena';
+            this.message2.innerText = 'Choose your fighter';
+        }
     }
 
     /**
