@@ -15,12 +15,12 @@ export class Snake {
      * @param {string} name - name of player
      */
 
-    constructor(game, x, y, speedX, speedY, color, name) {
+    constructor(game, x, y, speedX, speedY, color, name, image) {
         this.game = game;
         this.x = x;
         this.y = y;
         this.name = name;
-        this.image = document.getElementById('snakeCorgi');
+        this.image = image;
         this.spriteWidth = 200;
         this.spriteHeight = 200;
         this.speedX = speedX;
@@ -51,9 +51,41 @@ export class Snake {
         // check collision
 
         if(this.game.checkCollision(this, this.game.food)) {
-            this.game.food.reset();
-            this.score++;
-            this.length++;
+
+            
+            if(this.game.food.frameY == 1) {
+                if(this.score > 0)
+                    this.score--;
+                
+                for(let i = 0; i < 5; i++) {
+                    const particle = this.game.getParticle();
+                    if(particle) {
+                        particle.start(this.game.food.x * this.game.cellSize + this.game.cellSize * 0.5, this.game.food.y * this.game.cellSize + this.game.cellSize * 0.5, 'black');
+                    }
+                }
+                this.game.sound.playSound(badBite);
+                
+                this.game.food.reset();
+                if(this.length > 2) {
+                    this.length--;
+                    if(this.segments.length > this.length) {
+                        this.segments.pop();
+                    }
+                }
+            }
+            
+            else {
+                for(let i = 0; i < 5; i++) {
+                    const particle = this.game.getParticle();
+                    if(particle) {
+                        particle.start(this.game.food.x * this.game.cellSize + this.game.cellSize * 0.5, this.game.food.y * this.game.cellSize + this.game.cellSize * 0.5, 'gold');
+                    }
+                }
+                this.game.sound.playSound(bite1);
+                this.game.food.reset();
+                this.score++;
+                this.length++;
+            }
         }
 
         // boundaries
@@ -79,10 +111,19 @@ export class Snake {
 
         // win condition
         if(this.score >= this.game.winningScore) {
+            this.game.sound.playSound(win);
+            this.resetScore();
             this.game.gameUi.triggerGameOver(this);
         }
     }
 
+    /**
+    * resets the score 
+    */
+
+    resetScore() {
+        this.score = 0;
+    }
     /**
      * Draws the object on the canvas using the rendering context.
     */
@@ -281,8 +322,6 @@ export class Snake {
             else {  
                 segment.frameX = 2;
                 segment.frameY = 0;
-                console.log("last case");
-                
             }
         }
     }
@@ -301,8 +340,8 @@ export class Keyboard1 extends Snake {
      * @param {string} name - name of player
      */
 
-    constructor(game, x, y, speedX, speedY, color, name) {
-        super(game, x, y, speedX, speedY, color, name);
+    constructor(game, x, y, speedX, speedY, color, name, image) {
+        super(game, x, y, speedX, speedY, color, name, image);
 
         window.addEventListener('keydown', (e) => {
             if(e.code == 'ArrowUp') this.turnUp();
@@ -325,8 +364,8 @@ export class Keyboard2 extends Snake {
     * @param {string} name - name of player
     */
 
-   constructor(game, x, y, speedX, speedY, color, name) {
-       super(game, x, y, speedX, speedY, color, name);
+   constructor(game, x, y, speedX, speedY, color, name, image) {
+       super(game, x, y, speedX, speedY, color, name, image);
 
        window.addEventListener('keydown', (e) => {
            if(e.code == 'KeyW') this.turnUp();
@@ -349,28 +388,30 @@ export class ComputerAi extends Snake {
      * @param {string} name - name of the player
      */
 
-    constructor(game, x, y, speedX, speedY, color, name) {
-        super(game, x, y, speedX, speedY, color, name);
+    constructor(game, x, y, speedX, speedY, color, name, image) {
+        super(game, x, y, speedX, speedY, color, name, image);
         this.turnTimer = 0;
-        this.turnInterval;
         
+        // difficulty
+        this.aiDifficulty = document.getElementById('aiDifficulty').value;
+        this.turnInterval = Math.floor(Math.random() * this.aiDifficulty);
     }
     
     /**
      * Updates the object's properties every frame (e.g., position, state).
     */
    
-    update() {
-        super.update();
-        if ((this.x === this.game.food.x && this.speedY === 0) || (this.y === this.game.food.y && this.speedX === 0)) {
-          this.turn();
+   update() {
+       super.update();
+       if ((this.x === this.game.food.x && this.speedY === 0) || (this.y === this.game.food.y && this.speedX === 0)) {
+           this.turn();
         } else {
-          if (this.turnTimer < this.turnInterval) {
-            this.turnTimer += 1;
-          } else {
-            this.turnTimer = 0;
-            this.turn();
-            this.turnInterval = Math.floor(Math.random() * 8) + 5;
+            if (this.turnTimer < this.turnInterval) {
+                this.turnTimer += 1;
+            } else {
+                this.turnTimer = 0;
+                this.turn();
+                this.turnInterval = Math.floor(Math.random() * this.aiDifficulty);
           }
         }
     }
@@ -380,11 +421,40 @@ export class ComputerAi extends Snake {
     */
 
     turn() {
-        this.turnTimer = 0;
+    const food = this.game.food;
+
+    const canTurnUp = this.y > this.game.topMargin;
+    const canTurnDown = this.y < this.game.rows - 1;
+    const canTurnLeft = this.x > 0;
+    const canTurnRight = this.x < this.game.columns - 1;
+
+    if (food.x == this.x && food.y < this.y && this.speedY <= 0 && canTurnUp) {
+        this.turnUp();
+    } 
+    else if (food.x == this.x && food.y > this.y && this.speedY >= 0 && canTurnDown) {
+        this.turnDown();
+    } 
+    else if (food.y == this.y && food.x < this.x && this.speedX <= 0 && canTurnLeft) {
+        this.turnLeft();
+    } 
+    else if (food.y == this.y && food.x > this.x && this.speedX >= 0 && canTurnRight) {
+        this.turnRight();
+    } 
+    else {
+        // fallback random movement avoiding walls
+        const options = [];
         if (this.speedY === 0) {
-          this.game.food.y < this.y ? this.turnUp() : this.turnDown();
-        } else if (this.speedX === 0) {
-          this.game.food.x < this.x ? this.turnLeft() : this.turnRight();
+            if (canTurnUp) options.push(() => this.turnUp());
+            if (canTurnDown) options.push(() => this.turnDown());
+        } else {
+            if (canTurnLeft) options.push(() => this.turnLeft());
+            if (canTurnRight) options.push(() => this.turnRight());
+        }
+        if (options.length > 0) {
+            const randomTurn = options[Math.floor(Math.random() * options.length)];
+            randomTurn();
         }
     }
+}
+
 }

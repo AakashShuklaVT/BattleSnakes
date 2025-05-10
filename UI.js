@@ -24,6 +24,11 @@ export class UI {
         this.player2Name = document.getElementById('player2Name');
         this.player3Name = document.getElementById('player3Name');
 
+        // charcter
+        this.player1Character = document.getElementById('player1Character');
+        this.player2Character = document.getElementById('player2Character');
+        this.player3Character = document.getElementById('player3Character');
+
         // full screen button
         this.fullScreenButton =  document.getElementById('fullScreenButton');
 
@@ -54,12 +59,22 @@ export class UI {
     /**
      * triggers game over state
      */
+    
     triggerGameOver(winner) {
         this.gameOverUi();
         if(winner) {
             this.game.gameOver = true;
-            this.message1.innerText = 'Game Over ' + winner.name + ' wins';
-            this.message2.innerText = 'Winning Score '+ winner.score;
+            if(winner.name) {
+                this.message1.innerText = 'Game Over ' + winner.name + ' wins';
+                this.message2.innerText = 'Game time '+ this.game.formatTimer() + ' seconds';
+            }
+
+            for(let i = 0; i < 5; i++) {
+                const particle = this.game.getParticle();
+                if(particle) {
+                    particle.start(Math.random() * this.game.width, this.game.height * 0.9, 'gold');
+                }
+            }
         }
         else {
             this.message1.innerText = 'Welcome to the Battle Arena';
@@ -80,9 +95,16 @@ export class UI {
     /**
      * shows ui when game is in over mode
     */
+
    gameOverUi() {
-       this.gameMenu.style.display = 'block'
-       this.startButton.innerText = 'Start'
-       this.gameOverScreen.style.display = 'block';
+        this.gameMenu.style.display = 'block'
+        this.startButton.innerText = 'Start'
+        this.gameOverScreen.style.display = 'block';
+        this.game.player1.score = 0;
+        this.game.player2.score = 0;
+        this.game.player3.score = 0;
+        this.scoreBoard1.innerText = `${this.game.player1.name} : ${this.game.player1.score}`;
+        this.scoreBoard2.innerText = `${this.game.player2.name} : ${this.game.player2.score}`;
+        this.scoreBoard3.innerText = `${this.game.player3.name} : ${this.game.player3.score}`;
     }
 }   
